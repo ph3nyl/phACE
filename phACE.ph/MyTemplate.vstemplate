@@ -1,0 +1,33 @@
+<VSTemplate Version="3.0.0" xmlns="http://schemas.microsoft.com/developer/vstemplate/2005" Type="Project">
+  <TemplateData>
+    <Name>phACE.ph</Name>
+    <Description>&lt;No description available&gt;</Description>
+    <ProjectType>CSharp</ProjectType>
+    <ProjectSubType>
+    </ProjectSubType>
+    <SortOrder>1000</SortOrder>
+    <CreateNewFolder>true</CreateNewFolder>
+    <DefaultName>phACE.ph</DefaultName>
+    <ProvideDefaultName>true</ProvideDefaultName>
+    <LocationField>Enabled</LocationField>
+    <EnableLocationBrowseButton>true</EnableLocationBrowseButton>
+    <CreateInPlace>true</CreateInPlace>
+    <Icon>__TemplateIcon.ico</Icon>
+  </TemplateData>
+  <TemplateContent>
+    <Project TargetFileName="phACE.ph.csproj" File="phACE.ph.csproj" ReplaceParameters="true">
+
+      <Folder Name="content" TargetFolderName="content">
+        <Folder Name="landblocks" TargetFolderName="landblocks" />
+        <Folder Name="quests" TargetFolderName="quests" />
+        <Folder Name="recipes" TargetFolderName="recipes" />
+        <Folder Name="spells" TargetFolderName="spells" />
+        <Folder Name="weenies" TargetFolderName="weenies" />
+      </Folder>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Meta.json">Meta.json</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Mod.cs">Mod.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="true" TargetFileName="Patch_.cs">Patch_.cs</ProjectItem>
+      <ProjectItem ReplaceParameters="false" TargetFileName="Readme.md">Readme.md</ProjectItem>
+    </Project>
+  </TemplateContent>
+</VSTemplate>

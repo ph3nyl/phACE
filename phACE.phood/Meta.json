@@ -1,0 +1,10 @@
+{
+  "Name": "phACE.phood",
+  "Author": "phenyl",
+  "Description": "",
+  "Version": "1.1.0",
+  "Enabled": true,
+  "HotReload": true,
+  "RegisterCommands": true,
+  "ACEVersion": "0.0"
+}

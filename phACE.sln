@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "templates", "templates", "{3AA97851-1F5A-4E77-9B65-AF792AA7C27B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "phACE.ph", "phACE.ph\phACE.ph.csproj", "{D44A1794-D0FA-4909-81FE-13A888669CCB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".root", ".root", "{8305CF2D-CBD9-4A27-AAF6-D75FD1EBB7E1}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+		Content.md = Content.md
+	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "phACE", "phACE\phACE.shproj", "{2056D6FC-AB49-46DF-92BC-0842CFE11935}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "phACE.phletching", "phACE.phletching\phACE.phletching.csproj", "{AD6F4CAD-036F-4BB5-AC4D-692C99623F16}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "phACE.phood", "phACE.phood\phACE.phood.csproj", "{27F2F80E-9EDD-4305-8203-CCEAFBD7A6CD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D44A1794-D0FA-4909-81FE-13A888669CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D44A1794-D0FA-4909-81FE-13A888669CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD6F4CAD-036F-4BB5-AC4D-692C99623F16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD6F4CAD-036F-4BB5-AC4D-692C99623F16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD6F4CAD-036F-4BB5-AC4D-692C99623F16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD6F4CAD-036F-4BB5-AC4D-692C99623F16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27F2F80E-9EDD-4305-8203-CCEAFBD7A6CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27F2F80E-9EDD-4305-8203-CCEAFBD7A6CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27F2F80E-9EDD-4305-8203-CCEAFBD7A6CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27F2F80E-9EDD-4305-8203-CCEAFBD7A6CD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D44A1794-D0FA-4909-81FE-13A888669CCB} = {3AA97851-1F5A-4E77-9B65-AF792AA7C27B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8E82CF4A-1A48-46FD-8DC8-03CE77DC0EED}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		phACE\phACE.projitems*{2056d6fc-ab49-46df-92bc-0842cfe11935}*SharedItemsImports = 13
+		phACE\phACE.projitems*{27f2f80e-9edd-4305-8203-cceafbd7a6cd}*SharedItemsImports = 5
+		phACE\phACE.projitems*{ad6f4cad-036f-4bb5-ac4d-692c99623f16}*SharedItemsImports = 5
+		phACE\phACE.projitems*{d44a1794-d0fa-4909-81fe-13a888669ccb}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal
