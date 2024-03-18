@@ -74,9 +74,7 @@ namespace phACE.phood
                 augMod += player.AugmentationFasterRegen;
 
             // cap rate?
-            var currentTick = vital.RegenRate * attributeMod * stanceMod * enchantmentMod * augMod;
-
-            currentTick += GetExtraRegen(vital, __instance);
+            var currentTick = (vital.RegenRate + GetExtraRegen(vital, __instance)) * attributeMod * stanceMod * enchantmentMod * augMod;
 
             // add in partially accumulated / rounded vitals from previous tick(s)
             var totalTick = currentTick + vital.PartialRegen;
@@ -106,7 +104,7 @@ namespace phACE.phood
                         }
                     }
 
-                    return true;
+                    return false;
                 }
             }
             return false;
@@ -211,11 +209,15 @@ namespace phACE.phood
 
             if (__instance.BoostValue == 0 || __instance.GetUseSound() != Sound.Eat1) return true;
 
+            var ratingMod = __instance.BoostValue > 0 ? player.GetHealingRatingMod() : 1.0f;
+
+            var boostValue = (int)Math.Round(__instance.BoostValue * ratingMod);
+
             bool skipConsume = false;
 
             if (__instance.BoosterEnum == PropertyAttribute2nd.Health && __instance.BoostValue != 0 && __instance.GetUseSound() == Sound.Eat1)
             {
-                if ((__instance.BoostValue * Settings.BoostToSatConversionFactor) + player.GetProperty(FakeFloat.SaturationHealth) > (__instance.BoostValue * Settings.BoostToSatConversionFactor) * Settings.SpiceOfLife)
+                if ((boostValue * Settings.BoostToSatConversionFactor) + player.GetProperty(FakeFloat.SaturationHealth) > (boostValue * Settings.BoostToSatConversionFactor) * Settings.SpiceOfLife)
                 {
                     player.SendMessage($"You just can't bring yourself to eat the {__instance.Name}. Maybe better food would be more appetizing.");
                     skipConsume = true;
@@ -225,7 +227,7 @@ namespace phACE.phood
             }
             else if (__instance.BoosterEnum == PropertyAttribute2nd.Stamina && __instance.BoostValue != 0 && __instance.GetUseSound() == Sound.Eat1)
             {
-                if ((__instance.BoostValue * Settings.BoostToSatConversionFactor) + player.GetProperty(FakeFloat.SaturationStamina) > (__instance.BoostValue * Settings.BoostToSatConversionFactor) * Settings.SpiceOfLife)
+                if ((boostValue * Settings.BoostToSatConversionFactor) + player.GetProperty(FakeFloat.SaturationStamina) > (boostValue * Settings.BoostToSatConversionFactor) * Settings.SpiceOfLife)
                 {
                     player.SendMessage($"You just can't bring yourself to eat the {__instance.Name}. Maybe better food would be more appetizing.");
                     skipConsume = true;
@@ -235,7 +237,7 @@ namespace phACE.phood
             }
             else if (__instance.BoosterEnum == PropertyAttribute2nd.Mana && __instance.BoostValue != 0 && __instance.GetUseSound() == Sound.Eat1)
             {
-                if ((__instance.BoostValue * Settings.BoostToSatConversionFactor) + player.GetProperty(FakeFloat.SaturationMana) > (__instance.BoostValue * Settings.BoostToSatConversionFactor) * Settings.SpiceOfLife)
+                if ((boostValue * Settings.BoostToSatConversionFactor) + player.GetProperty(FakeFloat.SaturationMana) > (boostValue * Settings.BoostToSatConversionFactor) * Settings.SpiceOfLife)
                 {
                     player.SendMessage($"You just can't bring yourself to eat the {__instance.Name}. Maybe better food would be more appetizing.");
                     skipConsume = true;

@@ -18,9 +18,9 @@ namespace phACE.phood
 
         #region Patch_VitalSaturation
         public bool EnableVitalSaturation { get; set; } = true;
-        public static double BonusRegenHealth { get; set; } = 2.5d;
-        public static double BonusRegenStamina { get; set; } = 2.5d;
-        public static double BonusRegenMana { get; set; } = 2.5d;
+        public static double BonusRegenHealth { get; set; } = 0.3d;
+        public static double BonusRegenStamina { get; set; } = 3.0d;
+        public static double BonusRegenMana { get; set; } = 1.0d;
         public static double MaxRegenPoolValue { get; set; } = 3600d;
         public static double BoostToSatConversionFactor { get; set; } = 6.0d;
         public static double SpiceOfLife { get; set; } = 10.0d;

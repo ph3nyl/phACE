@@ -11,9 +11,9 @@ additionally has a "well fed" spell that selfcasts when all saturation pools are
 |setting                        |default    |range  |   notes
 |-------------------------------|-----------|-------|--------
 |EnableVitalSaturation          |true       |t/f    |
-|BonusRegenHealth               |2.5d       |0-#?   |hp per tick (currently unaffected by regen multipliers)
-|BonusRegenStamina              |2.5d       |0-#?   |sp per tick (currently unaffected by regen multipliers)
-|BonusRegenMana                 |2.5d       |0-#?   |mp per tick (currently unaffected by regen multipliers)
+|BonusRegenHealth               |0.3d       |0-#?   |hp per tick (doubles regen before multipliers)
+|BonusRegenStamina              |3.0d       |0-#?   |sp per tick (doubles regen before multipliers)
+|BonusRegenMana                 |1.0d       |0-#?   |mp per tick (doubles regen before multipliers)
 |MaxRegenPoolValue              |3600.0d    |0-#?   |well fed ticks on/off at 25% of this
 |BoostToSatConversionFactor     |6.0d       |0-#?   |converts vital boost on food to vital saturation
 |SpiceOfLife                    |10.0d      |0-#?   |max saturation contribution of a specific food item
@@ -23,6 +23,9 @@ additionally has a "well fed" spell that selfcasts when all saturation pools are
 ## commands:
 - @sat @saturation @food @hunger
 	- displays character's current saturation pool levels in chat log.
+
+## warnings:
+- completely overwrites Creature.VitalHeartBeat in Creature_Vitals.cs
 
 ## special thanks:
 - **aquafir**. extremely helpful in pointing my brute-force haphazard energy in the right direction to actually make progress. thanks, green bro.
