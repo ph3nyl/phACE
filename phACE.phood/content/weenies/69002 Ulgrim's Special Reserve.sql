@@ -1,7 +1,7 @@
 DELETE FROM `weenie` WHERE `class_Id` = 69002;
 
 INSERT INTO `weenie` (`class_Id`, `class_Name`, `type`, `last_Modified`)
-VALUES (69002, 'phACE.phood-UlgrimsSpecialReserve', 18, '2021-11-01 00:00:00') /* Food */;
+VALUES (69002, 'phACE.phood-UlgrimsSpecialReserveT9', 18, '2021-11-01 00:00:00') /* Food */;
 
 INSERT INTO `weenie_properties_int` (`object_Id`, `type`, `value`)
 VALUES (69002,   1,         32) /* ItemType - Food */
@@ -14,11 +14,11 @@ VALUES (69002,   1,         32) /* ItemType - Food */
      , (69002,  18,          1) /* UiEffects - Magical */
      , (69002,  19,         10) /* Value */
      , (69002,  93,       1044) /* PhysicsState - Ethereal, IgnoreCollisions, Gravity */
-	 , (69002, 105,          0) /* ItemWorkmanship */
-     , (69002, 106,        250) /* ItemSpellcraft */
+	 , (69002, 105,          9) /* ItemWorkmanship */
+     , (69002, 106,        400) /* ItemSpellcraft */
      , (69002, 109,          0) /* ItemDifficulty */
 	 , (69002, 366,         39) /* UseRequiresSkill - Cooking */
-     , (69002, 367,          0) /* UseRequiresSkillLevel */;
+     , (69002, 367,        350) /* UseRequiresSkillLevel */;
 
 INSERT INTO `weenie_properties_bool` (`object_Id`, `type`, `value`)
 VALUES (69002,  11, True ) /* IgnoreCollisions */
@@ -43,9 +43,9 @@ VALUES (69002,   1, 0x02001258) /* Setup */
      , (69002,  52, 0x06005EBB) /* IconUnderlay */;
 
 INSERT INTO `weenie_properties_spell_book` (`object_Id`, `spell`, `probability`)
-VALUES (69002,  3864,      2)
-     , (69002,  3863,      2)
-     , (69002,  3533,      2)
-     , (69002,  3531,      2)
-     , (69002,  3530,      2)
-     , (69002,  3862,      2);
+VALUES (69002,  3864,      2) /* Zongo's Fist */
+     , (69002,  3863,      2) /* Hunter's Hardiness */
+     , (69002,  3533,      2) /* Brighteyes' Favor */
+     , (69002,  3531,      2) /* Bobo's Quickening */
+     , (69002,  3530,      2) /* Ketnan's Eye */
+     , (69002,  3862,      2) /* Duke Raoul's Pride */;

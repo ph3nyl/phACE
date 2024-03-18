@@ -1,6 +1,7 @@
 ﻿using ACE.Entity.Enum;
 using ACE.Entity.Models;
 using ACE.Server.Entity;
+using ACE.Server.Entity.Actions;
 using ACE.Server.Factories;
 using ACE.Server.Managers;
 using ACE.Server.WorldObjects;
@@ -32,7 +33,7 @@ namespace phACE.phood
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
         public static bool PreUseObjectOnTarget(Player player, WorldObject source, WorldObject target, bool confirmed, ref RecipeManager __instance)
         {
-            if (source.WeenieClassId != 29180 /*Empty Bottles*/ || target.WeenieClassId != 69001 /*Keg of Ulgrim's Special Reserve*/) return true;
+            if (source.WeenieClassId != 29180 /*Empty Bottles*/ || target.WeenieClassName != "phACE.phood-KegOfUlgrimsSpecialReserve") return true;
 
             if (player.IsBusy)
             {
@@ -47,140 +48,69 @@ namespace phACE.phood
                 return false;
             }
 
-            player.Skills.TryGetValue(Skill.Fletching, out var skill);
+            player.Skills.TryGetValue(Skill.Cooking, out var skill);
             if (skill != null && Mod.Settings != null)
             {
                 if (skill.AdvancementClass == SkillAdvancementClass.Untrained)
                 {
                     //error - untrained cooking
+                    //player.SendUseDoneEvent(WeenieError.SkillTooLow);
+                    player.SendUseDoneEvent(WeenieError.YouDoNotPassCraftingRequirements);
+                    return false;
                 }
                 else
                 {
-                    WorldObject wo = WorldObjectFactory.CreateNewWorldObject(69002);
-
-                    player.SendMessage("RecipeManager.UseObjectOnTarget");
-                    player.SendMessage($"source = {source.Name}, stack = {source.StackSize}/{source.MaxStackSize}");
-                    player.SendMessage($"target = {target.Name}, stack = {target.StackSize}/{target.MaxStackSize}");
-                    player.SendMessage($"result = {wo.Name}, stack = {wo.StackSize}/{wo.MaxStackSize}");
-
-                    /* todo: this doesnt work. make weenies
-                    switch (skill.Current)
+                    WorldObject wo = skill.Current switch
                     {
                         //level I +10 stat "Poorly crafted"
-                        case var _ when skill.Current < 50:
-                        wo.Workmanship = 1;
-                        wo.UseRequiresSkillLevel = 0;
-                        wo.Biota.PropertiesSpellBook.Add(2, 1.0f); //Str I
-                        wo.Biota.PropertiesSpellBook.Add(1349, 1.0f); //End I
-                        wo.Biota.PropertiesSpellBook.Add(1373, 1.0f); //Crd I
-                        wo.Biota.PropertiesSpellBook.Add(1397, 1.0f); //Qik I
-                        wo.Biota.PropertiesSpellBook.Add(1421, 1.0f); //Fcs I
-                        wo.Biota.PropertiesSpellBook.Add(1445, 1.0f); //Wil I
-                        break;
-
+                        var _ when skill.Current < 50 => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT1"),
                         //level II +15 stat "Well-crafted"
-                        case var _ when (skill.Current >= 50 && skill.Current < 100):
-                        wo.Workmanship = 2;
-                        wo.UseRequiresSkillLevel = 0;
-                        wo.Biota.PropertiesSpellBook.Add(1328, 1.0f); //Str II
-                        wo.Biota.PropertiesSpellBook.Add(1350, 1.0f); //End II
-                        wo.Biota.PropertiesSpellBook.Add(1374, 1.0f); //Crd II
-                        wo.Biota.PropertiesSpellBook.Add(1398, 1.0f); //Qik II
-                        wo.Biota.PropertiesSpellBook.Add(1422, 1.0f); //Fcs II
-                        wo.Biota.PropertiesSpellBook.Add(1446, 1.0f); //Wil II
-                        break;
-
+                        var _ when (skill.Current >= 50 && skill.Current < 100) => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT2"),
                         //level III +20 stat "Finely crafted"
-                        case var _ when (skill.Current >= 100 && skill.Current < 150):
-                        wo.Workmanship = 3;
-                        wo.UseRequiresSkillLevel = 50;
-                        wo.Biota.PropertiesSpellBook.Add(1329, 1.0f); //Str III
-                        wo.Biota.PropertiesSpellBook.Add(1351, 1.0f); //End III
-                        wo.Biota.PropertiesSpellBook.Add(1375, 1.0f); //Crd III
-                        wo.Biota.PropertiesSpellBook.Add(1399, 1.0f); //Qik III
-                        wo.Biota.PropertiesSpellBook.Add(1423, 1.0f); //Fcs III
-                        wo.Biota.PropertiesSpellBook.Add(1447, 1.0f); //Wil III
-                        break;
-
+                        var _ when (skill.Current >= 100 && skill.Current < 150) => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT3"),
                         //level IV +20 stat "Exquisitely crafted"
-                        case var _ when (skill.Current >= 150 && skill.Current < 200):
-                        wo.Workmanship = 4;
-                        wo.UseRequiresSkillLevel = 100;
-                        wo.Biota.PropertiesSpellBook.Add(1330, 1.0f); //Str IV
-                        wo.Biota.PropertiesSpellBook.Add(1352, 1.0f); //End IV
-                        wo.Biota.PropertiesSpellBook.Add(1376, 1.0f); //Crd IV
-                        wo.Biota.PropertiesSpellBook.Add(1400, 1.0f); //Qik IV
-                        wo.Biota.PropertiesSpellBook.Add(1424, 1.0f); //Fcs IV
-                        wo.Biota.PropertiesSpellBook.Add(1448, 1.0f); //Wil IV
-                        break;
-
+                        var _ when (skill.Current >= 150 && skill.Current < 200) => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT4"),
                         //level V +25 stat "Magnificent"
-                        case var _ when (skill.Current >= 200 && skill.Current < 250):
-                        wo.Workmanship = 5;
-                        wo.UseRequiresSkillLevel = 150;
-                        wo.Biota.PropertiesSpellBook.Add(1331, 1.0f); //Str V
-                        wo.Biota.PropertiesSpellBook.Add(1353, 1.0f); //End V
-                        wo.Biota.PropertiesSpellBook.Add(1377, 1.0f); //Crd V
-                        wo.Biota.PropertiesSpellBook.Add(1401, 1.0f); //Qik V
-                        wo.Biota.PropertiesSpellBook.Add(1425, 1.0f); //Fcs V
-                        wo.Biota.PropertiesSpellBook.Add(1449, 1.0f); //Wil V
-                        break;
-
+                        var _ when (skill.Current >= 200 && skill.Current < 250) => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT5"),
                         //level VI +30 stat "Nearly flawless"
-                        case var _ when (skill.Current >= 250 && skill.Current < 300):
-                        wo.Workmanship = 6;
-                        wo.UseRequiresSkillLevel = 200;
-                        wo.Biota.PropertiesSpellBook.Add(1332, 1.0f); //Str VI
-                        wo.Biota.PropertiesSpellBook.Add(1354, 1.0f); //End VI
-                        wo.Biota.PropertiesSpellBook.Add(1378, 1.0f); //Crd VI
-                        wo.Biota.PropertiesSpellBook.Add(1402, 1.0f); //Qik VI
-                        wo.Biota.PropertiesSpellBook.Add(1426, 1.0f); //Fcs VI
-                        wo.Biota.PropertiesSpellBook.Add(1450, 1.0f); //Wil VI
-                        break;
-
+                        var _ when (skill.Current >= 250 && skill.Current < 300) => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT6"),
                         //level VII +35 stat "Flawless"
-                        case var _ when (skill.Current >= 300 && skill.Current < 350):
-                        wo.Workmanship = 7;
-                        wo.UseRequiresSkillLevel = 250;
-                        wo.Biota.PropertiesSpellBook.Add(2087, 1.0f); //Str VII
-                        wo.Biota.PropertiesSpellBook.Add(2059, 1.0f); //End VII
-                        wo.Biota.PropertiesSpellBook.Add(2061, 1.0f); //Crd VII
-                        wo.Biota.PropertiesSpellBook.Add(2081, 1.0f); //Qik VII
-                        wo.Biota.PropertiesSpellBook.Add(2067, 1.0f); //Fcs VII
-                        wo.Biota.PropertiesSpellBook.Add(2091, 1.0f); //Wil VII
-                        break;
-
+                        var _ when (skill.Current >= 300 && skill.Current < 350) => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT7"),
                         //level VIII +40 stat "Utterly flawless"
-                        case var _ when (skill.Current >= 350 && skill.Current < 400):
-                        wo.Workmanship = 8;
-                        wo.UseRequiresSkillLevel = 300;
-                        wo.Biota.PropertiesSpellBook.Add(4325, 1.0f); //Str VIII
-                        wo.Biota.PropertiesSpellBook.Add(4299, 1.0f); //End VIII
-                        wo.Biota.PropertiesSpellBook.Add(4297, 1.0f); //Crd VIII
-                        wo.Biota.PropertiesSpellBook.Add(4319, 1.0f); //Qik VIII
-                        wo.Biota.PropertiesSpellBook.Add(4305, 1.0f); //Fcs VIII
-                        wo.Biota.PropertiesSpellBook.Add(4329, 1.0f); //Wil VIII
-                        break;
-
+                        var _ when (skill.Current >= 350 && skill.Current < 400) => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT8"),
                         //level 'IX' +45 stat "Incomparable"
-                        case var _ when skill.Current >= 400:
-                        wo.Workmanship = 9;
-                        wo.UseRequiresSkillLevel = 350;
-                        wo.Biota.PropertiesSpellBook.Add(3864, 1.0f); //Str IX
-                        wo.Biota.PropertiesSpellBook.Add(3863, 1.0f); //End IX
-                        wo.Biota.PropertiesSpellBook.Add(3533, 1.0f); //Crd IX
-                        wo.Biota.PropertiesSpellBook.Add(3531, 1.0f); //Qik IX
-                        wo.Biota.PropertiesSpellBook.Add(3530, 1.0f); //Fcs IX
-                        wo.Biota.PropertiesSpellBook.Add(3862, 1.0f); //Wil IX
-                        break;
-                    }*/
+                        _ => WorldObjectFactory.CreateNewWorldObject("phACE.phood-UlgrimsSpecialReserveT9"),
+                    };
+                    wo.SetStackSize(50);
 
-                    player.TryConsumeFromInventoryWithNetworking(29180, 1);
-                    player.TryConsumeFromInventoryWithNetworking(69001, 1);
+                    var actionChain = new ActionChain();
 
-                    player.TryCreateInInventoryWithNetworking(wo);
+                    // if something other that NonCombat.Ready,
+                    // manually send this swap
+                    var prevStance = player.CurrentMotionState.Stance;
 
-                    player.SendUseDoneEvent();
+                    var animTime = 0.0f;
+
+                    if (prevStance != MotionStance.NonCombat)
+                        animTime = player.EnqueueMotion_Force(actionChain, MotionStance.NonCombat, MotionCommand.Ready, (MotionCommand)prevStance);
+
+                    // start the eat/drink motion
+                    var useAnimTime = player.EnqueueMotion_Force(actionChain, MotionStance.NonCombat, MotionCommand.ClapHands);
+                    animTime += useAnimTime;
+
+                    // remove source/target
+                    actionChain.AddAction(player, () => { player.TryConsumeFromInventoryWithNetworking(source, 1); });
+                    actionChain.AddAction(player, () => { player.TryConsumeFromInventoryWithNetworking(target, 1); });
+
+                    // create beers in player inv
+                    actionChain.AddAction(player, () => { player.TryCreateInInventoryWithNetworking(wo); });
+
+                    if (prevStance != MotionStance.NonCombat)
+                        animTime += player.EnqueueMotion_Force(actionChain, prevStance, MotionCommand.Ready, MotionCommand.NonCombat);
+
+                    actionChain.AddAction(player, () => { player.SendUseDoneEvent(); });
+
+                    actionChain.EnqueueChain();
 
                     return false;
                 }
@@ -212,6 +142,7 @@ namespace phACE.phood
                 var spell = new Spell(spellID);
                 player.TryCastSpell(spell, player, __instance, tryResist: false);
             }
+            player.TryConsumeFromInventoryWithNetworking(__instance, 1);
 
             return false;
         }
