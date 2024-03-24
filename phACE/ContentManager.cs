@@ -6,6 +6,7 @@ using ACE.DatLoader.Entity;
 using ACE.Entity;
 using ACE.Entity.Enum.Properties;
 using ACE.Server.Command.Handlers.Processors;
+using ACE.Server.Mods;
 using ACE.Server.Network;
 using ACE.Shared.Helpers;
 
@@ -22,6 +23,7 @@ namespace phACE
 
     public static class ContentManager
     {
+        private const bool DEBUG = false;
         private static List<uint> wcids = new();
         private static List<ushort> lbids = new();
         private static List<uint> rids = new();
@@ -34,61 +36,69 @@ namespace phACE
         public static Dictionary<uint, ACE.Server.Entity.Spell> SIDs { get => sids; set => sids = value; }
         public static List<string> QFs { get => qfs; set => qfs = value; }
 
-        public static void ContentCommands(Session session, string modPath, params string[] parameters)
+        public static void ContentCommands(Session session, string contentPath, params string[] parameters)
         {
-            if (parameters?[0].ToLower() == "content" && parameters[1].ToLower() == "import")
-                ImportContent(modPath, session);
-            if (parameters?[0].ToLower() == "content" && parameters[1].ToLower() == "revert")
-                RevertContent(modPath, session);
+            //if (parameters?[1].ToLower() == "content" && parameters[2].ToLower() == "import")
+            //    ImportContent(PcontentPath, session);
+            //if (parameters?[1].ToLower() == "content" && parameters[2].ToLower() == "revert")
+            //    RevertContent(contentPath, session);
 
-            if (parameters?[0].ToLower() == "weenies" && parameters[1].ToLower() == "import")
-                ImportSQL(session, modPath, ContentType.Weenies);
-            if (parameters?[0].ToLower() == "weenies" && parameters[1].ToLower() == "revert")
-                RevertSQL(session, modPath, ContentType.Weenies);
+            if (parameters?[1].ToLower() == "weenies" && parameters[2].ToLower() == "import")
+                ImportSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Weenies);
+            if (parameters?[1].ToLower() == "weenies" && parameters[2].ToLower() == "revert")
+                RevertSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Weenies);
 
-            if (parameters?[0].ToLower() == "landblocks" && parameters[1].ToLower() == "import")
-                ImportSQL(session, modPath, ContentType.Landblocks);
-            if (parameters?[0].ToLower() == "landblocks" && parameters[1].ToLower() == "revert")
-                RevertSQL(session, modPath, ContentType.Landblocks);
+            if (parameters?[1].ToLower() == "landblocks" && parameters[1].ToLower() == "import")
+                ImportSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Landblocks);
+            if (parameters?[1].ToLower() == "landblocks" && parameters[1].ToLower() == "revert")
+                RevertSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Landblocks);
 
-            if (parameters?[0].ToLower() == "spells" && parameters[1].ToLower() == "import")
-                ImportSQL(session, modPath, ContentType.Spells);
-            if (parameters?[0].ToLower() == "spells" && parameters[1].ToLower() == "revert")
-                RevertSQL(session, modPath, ContentType.Spells);
+            if (parameters?[1].ToLower() == "spells" && parameters[2].ToLower() == "import")
+                ImportSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Spells);
+            if (parameters?[1].ToLower() == "spells" && parameters[2].ToLower() == "revert")
+                RevertSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Spells);
 
-            if (parameters?[0].ToLower() == "recipes" && parameters[1].ToLower() == "import")
-                ImportSQL(session, modPath, ContentType.Recipes);
-            if (parameters?[0].ToLower() == "recipes" && parameters[1].ToLower() == "revert")
-                RevertSQL(session, modPath, ContentType.Recipes);
+            if (parameters?[1].ToLower() == "recipes" && parameters[2].ToLower() == "import")
+                ImportSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Recipes);
+            if (parameters?[1].ToLower() == "recipes" && parameters[2].ToLower() == "revert")
+                RevertSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Recipes);
 
-            if (parameters?[0].ToLower() == "quests" && parameters[1].ToLower() == "import")
-                ImportSQL(session, modPath, ContentType.Quests);
-            if (parameters?[0].ToLower() == "quests" && parameters[1].ToLower() == "revert")
-                RevertSQL(session, modPath, ContentType.Quests);
+            if (parameters?[1].ToLower() == "quests" && parameters[2].ToLower() == "import")
+                ImportSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Quests);
+            if (parameters?[1].ToLower() == "quests" && parameters[2].ToLower() == "revert")
+                RevertSQL(session, Path.Combine(contentPath, parameters[0].ToLower()), ContentType.Quests);
         }
 
-        public static void ImportContent(string modPath, Session? session = null)
+        public static void ImportContent(string contentPath, Session? session = null)
         {
-            ImportSQL(session, modPath, ContentType.Weenies);
-            ImportSQL(session, modPath, ContentType.Landblocks);
-            ImportSQL(session, modPath, ContentType.Spells);
-            ImportSQL(session, modPath, ContentType.Recipes);
-            ImportSQL(session, modPath, ContentType.Quests);
+            if (DEBUG) ModManager.Log($"ImportContent({contentPath})");
+            ImportSQL(session, contentPath, ContentType.Weenies);
+            ImportSQL(session, contentPath, ContentType.Landblocks);
+            ImportSQL(session, contentPath, ContentType.Spells);
+            ImportSQL(session, contentPath, ContentType.Recipes);
+            ImportSQL(session, contentPath, ContentType.Quests);
         }
 
-        public static void RevertContent(string modPath, Session? session = null)
+        public static void RevertContent(string contentPath, Session? session = null)
         {
-            RevertSQL(session, modPath, ContentType.Weenies);
-            RevertSQL(session, modPath, ContentType.Landblocks);
-            RevertSQL(session, modPath, ContentType.Spells);
-            RevertSQL(session, modPath, ContentType.Recipes);
-            RevertSQL(session, modPath, ContentType.Quests);
+            if (DEBUG) ModManager.Log($"RevertContent({contentPath})");
+            RevertSQL(session, contentPath, ContentType.Weenies);
+            RevertSQL(session, contentPath, ContentType.Landblocks);
+            RevertSQL(session, contentPath, ContentType.Spells);
+            RevertSQL(session, contentPath, ContentType.Recipes);
+            RevertSQL(session, contentPath, ContentType.Quests);
         }
 
-        private static void ImportSQL(Session? session, string modPath, ContentType contentType)
+        private static void ImportSQL(Session? session, string contentPath, ContentType contentType)
         {
-            var files = VerifyFilesForImport(session, modPath, contentType, out DirectoryInfo? buDir);
-            if (files == null || buDir == null) return;
+            if (DEBUG) ModManager.Log($"ContentManager.ImportSQL({contentPath}, {contentType})");
+            var files = VerifyFilesForImport(session, contentPath, contentType, out DirectoryInfo? buDir);
+            if (files == null || buDir == null)
+            {
+                if (DEBUG) ModManager.Log($"ContentManager.ImportSQL FOUND NO FILES TO IMPORT");
+                return;
+            }
+                
 
             switch (contentType)
             {
@@ -116,25 +126,26 @@ namespace phACE
             return;
         }
 
-        private static FileInfo[]? VerifyFilesForImport(Session? session, string modPath, ContentType contentType, out DirectoryInfo? buDir)
+        private static FileInfo[]? VerifyFilesForImport(Session? session, string contentPath, ContentType contentType, out DirectoryInfo? buDir)
         {
-            var folder = $"{Path.DirectorySeparatorChar}content{Path.DirectorySeparatorChar}{contentType.ToString().ToLower()}";
-
-            var di = new DirectoryInfo(modPath + folder);
+            if (DEBUG) ModManager.Log($"ContentManager.VerifyFilesForImport({contentPath}, {contentType})");
+            var di = new DirectoryInfo(Path.Combine(contentPath, contentType.ToString().ToLower()));
             EnumerationOptions options = new();
 
             var files = di.Exists ? di.GetFiles($"*.sql", options) : null;
 
             if (files == null || files.Length == 0)
             {
+                if (DEBUG) ModManager.Log($"[import] found no {contentType.ToString().ToLower()}");
                 session?.Player.SendMessage($"[import] found no {contentType.ToString().ToLower()}");
                 buDir = null;
                 return null;
             }
 
+            if (DEBUG) ModManager.Log($"[import] found {files.Length} {contentType.ToString().ToLower()}");
             session?.Player.SendMessage($"[import] found {files.Length} {contentType.ToString().ToLower()}");
 
-            buDir = new DirectoryInfo(modPath + folder + Path.DirectorySeparatorChar + "old" + Path.DirectorySeparatorChar);
+            buDir = new DirectoryInfo(Path.Combine(contentPath, contentType.ToString().ToLower(), "old"));
             if (!buDir.Exists)
                 buDir.Create();
 
@@ -154,12 +165,12 @@ namespace phACE
                 StreamWriter? sqlFile;
                 if (weenie == null)
                 {
-                    sqlFile = new StreamWriter(buDir.FullName + wcid + " " + "EMPTY WCID" + ".sql");
+                    sqlFile = new StreamWriter(Path.Combine(buDir.FullName, wcid + " " + "EMPTY WCID" + ".sql"));
                     sqlFile.WriteLine($"DELETE FROM `weenie` WHERE `class_Id` = {wcid};");
                 }
                 else
                 {
-                    sqlFile = new StreamWriter(buDir.FullName + wcid + " " + weenie.GetProperty(PropertyString.Name) + ".sql");
+                    sqlFile = new StreamWriter(Path.Combine(buDir.FullName, wcid + " " + weenie.GetProperty(PropertyString.Name) + ".sql"));
                     wsw.WeenieNames = DatabaseManager.World.GetAllWeenieNames();
                     wsw.SpellNames = DatabaseManager.World.GetAllSpellNames();
                     wsw.TreasureDeath = DatabaseManager.World.GetAllTreasureDeath();
@@ -197,7 +208,7 @@ namespace phACE
                 LBIDs.Add(lbid);
 
                 var instances = DatabaseManager.World.GetCachedInstancesByLandblock(lbid);
-                StreamWriter? sqlFile = new(buDir.FullName + lbid.ToString("X4") + ".sql");
+                StreamWriter? sqlFile = new(Path.Combine(buDir.FullName, lbid.ToString("X4") + ".sql"));
                 if (instances.Count == 0)
                 {
                     sqlFile.WriteLine($"DELETE FROM `landblock_instance` WHERE `landblock` = 0x{lbid:X4};");
@@ -239,13 +250,13 @@ namespace phACE
                 StreamWriter? sqlFile;
                 if (spell == null)
                 {
-                    sqlFile = new StreamWriter(buDir.FullName + sid.ToString("00000") + " " + "EMPTY SID" + ".sql");
+                    sqlFile = new StreamWriter(Path.Combine(buDir.FullName, sid.ToString("00000") + " " + "EMPTY SID" + ".sql"));
 
                     sqlFile.WriteLine($"DELETE FROM `spell` WHERE `id` = {sid};");
                 }
                 else
                 {
-                    sqlFile = new StreamWriter(buDir.FullName + sid.ToString("00000") + " " + spell.Name + ".sql");
+                    sqlFile = new StreamWriter(Path.Combine(buDir.FullName, sid.ToString("00000") + " " + spell.Name + ".sql"));
 
                     ssw.CreateSQLDELETEStatement(spell, sqlFile);
                     sqlFile.WriteLine();
@@ -302,18 +313,19 @@ namespace phACE
 
                 var recipe = DatabaseManager.World.GetRecipe(rid);
                 var cookbooks = DatabaseManager.World.GetCookbooksByRecipeId(rid);
-                var weenieName = DatabaseManager.World.GetWeenie(recipe.SuccessWCID).GetProperty(PropertyString.Name);
+                var weenie = DatabaseManager.World.GetWeenie(recipe.SuccessWCID);
+                string weenieName = weenie != null ? weenie.GetProperty(PropertyString.Name) : "";
                 StreamWriter? sqlFile;
-                if (cookbooks.Count == 0)
+                if (cookbooks.Count == 0 || weenie == null)
                 {
-                    sqlFile = new StreamWriter(buDir.FullName + rid.ToString("00000") + " " + "EMPTY RID" + ".sql");
+                    sqlFile = new StreamWriter(Path.Combine(buDir.FullName, rid.ToString("00000") + " " + "EMPTY RID" + ".sql"));
 
                     sqlFile.WriteLine($"DELETE FROM `recipe` WHERE `id` = {rid};");
                     sqlFile.WriteLine($"DELETE FROM `cook_book` WHERE `recipe_Id` = {rid};");
                 }
                 else
                 {
-                    sqlFile = new StreamWriter(buDir.FullName + rid.ToString("00000") + " " + weenieName + ".sql");
+                    sqlFile = new StreamWriter(Path.Combine(buDir.FullName, rid.ToString("00000") + " " + weenieName + ".sql"));
 
                     rsw.CreateSQLDELETEStatement(recipe, sqlFile);
                     sqlFile.WriteLine();
@@ -352,7 +364,7 @@ namespace phACE
                 QFs.Add(flag);
 
                 var quest = DatabaseManager.World.GetCachedQuest(flag);
-                StreamWriter? sqlFile = new(buDir.FullName + flag + ".sql");
+                StreamWriter? sqlFile = new(Path.Combine(buDir.FullName, flag + ".sql"));
                 if (quest == null)
                 {
                     sqlFile.WriteLine($"DELETE FROM `quest` WHERE `name` = {flag};");
@@ -381,11 +393,16 @@ namespace phACE
             }
         }
 
-        private static void RevertSQL(Session? session, string modPath, ContentType contentType)
+        private static void RevertSQL(Session? session, string contentPath, ContentType contentType)
         {
-            var files = VerifyFilesForRevert(session, modPath, contentType, out DirectoryInfo? buDir);
-            if (files == null) return;
-
+            if (DEBUG) ModManager.Log($"ContentManager.RevertSQL({contentPath}, {contentType})");
+            var files = VerifyFilesForRevert(session, contentPath, contentType, out DirectoryInfo? buDir);
+            if (files == null || buDir == null)
+            {
+                if (DEBUG) ModManager.Log($"ContentManager.RevertSQL FOUND NO FILES TO REVERT");
+                return;
+            }
+            
             switch (contentType)
             {
                 case ContentType.Weenies:
@@ -408,22 +425,25 @@ namespace phACE
             buDir?.Delete(true);
         }
 
-        private static FileInfo[]? VerifyFilesForRevert(Session? session, string modPath, ContentType contentType, out DirectoryInfo? buDir)
+        private static FileInfo[]? VerifyFilesForRevert(Session? session, string contentPath, ContentType contentType, out DirectoryInfo? buDir)
         {
-            var folder = $"{Path.DirectorySeparatorChar}content{Path.DirectorySeparatorChar}{contentType.ToString().ToLower()}{Path.DirectorySeparatorChar}old";
-            var di = new DirectoryInfo(modPath + folder);
+            if (DEBUG) ModManager.Log($"ContentManager.VerifyFilesForImport({contentPath}, {contentType})");
+            var di = new DirectoryInfo(Path.Combine(contentPath, contentType.ToString().ToLower(), "old"));
             EnumerationOptions options = new();
 
             var files = di.Exists ? di.GetFiles($"*.sql", options) : null;
 
             if (files == null || files.Length == 0)
             {
+                if (DEBUG) ModManager.Log($"[remove] found no {contentType.ToString().ToLower()}");
                 session?.Player.SendMessage($"[remove] found no {contentType.ToString().ToLower()}");
                 buDir = null;
                 return null;
             }
 
+            if (DEBUG) ModManager.Log($"[remove] found {files.Length} {contentType.ToString().ToLower()}");
             session?.Player.SendMessage($"[remove] found {files.Length} {contentType.ToString().ToLower()}");
+
             buDir = di;
             return files;
         }
@@ -433,14 +453,14 @@ namespace phACE
             foreach (var file in files)
             {
                 var wcid = uint.Parse(file.Name[..file.Name.IndexOf(" ")]);
-                var name = DatabaseManager.World.GetWeenie(wcid).GetProperty(PropertyString.Name);
+                //var name = DatabaseManager.World.GetWeenie(wcid).GetProperty(PropertyString.Name);
                 DeveloperContentCommands.ImportSQL(file.FullName);
                 DatabaseManager.World.ClearCachedWeenie(wcid);
                 var weenie = DatabaseManager.World.GetWeenie(wcid);
 
                 if (file.Name.Contains("EMPTY WCID"))
                 {
-                    session?.Player.SendMessage($"[remove] (weenies) {file.Name[..file.Name.IndexOf(" ")]} {name}: {weenie == null}");
+                    session?.Player.SendMessage($"[remove] (weenies) {file.Name[..file.Name.IndexOf(".")]}: {weenie == null}");
                 }
                 else
                 {

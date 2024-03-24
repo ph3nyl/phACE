@@ -14,21 +14,31 @@ using Spell = ACE.Server.Entity.Spell;
 
 namespace phACE.phood
 {
-    [HarmonyPatchCategory("VitalSaturation")]
-    public class Patch_VitalSaturation
+    [HarmonyPatchCategory(featureName)]
+    public class SaturatedVitals
     {
-        #region Init/Fini
-        private const bool DEBUG_PRINT = false;
         private readonly static string[] HungerLevelNames = { "Starving", "Hungry", "Satisfied", "Full", "Stuffed" };
         private static readonly Spell wellFed = new(06902);
 
-        public static void Init()
+        #region Init/Fini
+        private const bool DEBUG = false;
+        public const string featureName = "SaturatedVitals";
+
+        public void Init()
         {
-            //
+            Mod.Harmony.PatchCategory(featureName);
+            if (Settings.AutomaticContent)
+            {
+                ContentManager.RevertContent(Path.Combine(Mod.ModPath, featureName));
+                ContentManager.ImportContent(Path.Combine(Mod.ModPath, featureName));
+            }
         }
-        public static void Fini()
+        public void Fini()
         {
-            //
+            if (Settings.AutomaticContent)
+            {
+                ContentManager.RevertContent(Path.Combine(Mod.ModPath, featureName));
+            }
         }
         #endregion
 
@@ -384,69 +394,69 @@ namespace phACE.phood
 
         #endregion
 
-        #region Commands
+        //#region Commands
 
-        [CommandHandler("sat", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Show the character's current hunger status.")]
-        [CommandHandler("saturation", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Show the character's current hunger status.")]
-        [CommandHandler("food", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Show the character's current hunger status.")]
-        [CommandHandler("hunger", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Show the character's current hunger status.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        public static void HandleHunger(Session session, params string[] parameters)
-        {
-            var player = session.Player;
-
-            var health = player.GetProperty(FakeFloat.SaturationHealth) ?? 0;
-            var stamina = player.GetProperty(FakeFloat.SaturationStamina) ?? 0;
-            var mana = player.GetProperty(FakeFloat.SaturationMana) ?? 0;
-            var max = Settings.MaxRegenPoolValue;
-
-            string? healthFullness;
-            if (health >= max * 0.75f)
-                healthFullness = HungerLevelNames[4];
-            else if (health >= max * 0.5f)
-                healthFullness = HungerLevelNames[3];
-            else if (health >= max * 0.25f)
-                healthFullness = HungerLevelNames[2];
-            else if (health > 0)
-                healthFullness = HungerLevelNames[1];
-            else
-                healthFullness = HungerLevelNames[0];
-
-            string? staminaFullness;
-            if (stamina >= max * 0.75f)
-                staminaFullness = HungerLevelNames[4];
-            else if (stamina >= max * 0.5f)
-                staminaFullness = HungerLevelNames[3];
-            else if (stamina >= max * 0.25f)
-                staminaFullness = HungerLevelNames[2];
-            else if (stamina > 0)
-                staminaFullness = HungerLevelNames[1];
-            else
-                staminaFullness = HungerLevelNames[0];
-
-            string? manaFullness;
-            if (mana >= max * 0.75f)
-                manaFullness = HungerLevelNames[4];
-            else if (mana >= max * 0.5f)
-                manaFullness = HungerLevelNames[3];
-            else if (mana >= max * 0.25f)
-                manaFullness = HungerLevelNames[2];
-            else if (mana > 0)
-                manaFullness = HungerLevelNames[1];
-            else
-                manaFullness = HungerLevelNames[0];
-
-            session.Player.SendMessage($"Health Saturation : {healthFullness} ({health}/{max})");
-            session.Player.SendMessage($"Stamina Saturation : {staminaFullness} ({stamina}/{max})");
-            session.Player.SendMessage($"Mana Saturation : {manaFullness} ({mana}/{max})");
-        }
-
-        //[CommandHandler("unbuff", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld)]
+        //[CommandHandler("sat", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Show the character's current hunger status.")]
+        //[CommandHandler("saturation", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Show the character's current hunger status.")]
+        //[CommandHandler("food", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Show the character's current hunger status.")]
+        //[CommandHandler("hunger", AccessLevel.Player, CommandHandlerFlag.RequiresWorld, "Show the character's current hunger status.")]
         //[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        //public static void Unbuff(Session session, params string[] parameters)
-        //=> session.Player.EnchantmentManager.DispelAllEnchantments();
+        //public static void HandleHunger(Session session, params string[] parameters)
+        //{
+        //    var player = session.Player;
 
-        #endregion
+        //    var health = player.GetProperty(FakeFloat.SaturationHealth) ?? 0;
+        //    var stamina = player.GetProperty(FakeFloat.SaturationStamina) ?? 0;
+        //    var mana = player.GetProperty(FakeFloat.SaturationMana) ?? 0;
+        //    var max = Settings.MaxRegenPoolValue;
+
+        //    string? healthFullness;
+        //    if (health >= max * 0.75f)
+        //        healthFullness = HungerLevelNames[4];
+        //    else if (health >= max * 0.5f)
+        //        healthFullness = HungerLevelNames[3];
+        //    else if (health >= max * 0.25f)
+        //        healthFullness = HungerLevelNames[2];
+        //    else if (health > 0)
+        //        healthFullness = HungerLevelNames[1];
+        //    else
+        //        healthFullness = HungerLevelNames[0];
+
+        //    string? staminaFullness;
+        //    if (stamina >= max * 0.75f)
+        //        staminaFullness = HungerLevelNames[4];
+        //    else if (stamina >= max * 0.5f)
+        //        staminaFullness = HungerLevelNames[3];
+        //    else if (stamina >= max * 0.25f)
+        //        staminaFullness = HungerLevelNames[2];
+        //    else if (stamina > 0)
+        //        staminaFullness = HungerLevelNames[1];
+        //    else
+        //        staminaFullness = HungerLevelNames[0];
+
+        //    string? manaFullness;
+        //    if (mana >= max * 0.75f)
+        //        manaFullness = HungerLevelNames[4];
+        //    else if (mana >= max * 0.5f)
+        //        manaFullness = HungerLevelNames[3];
+        //    else if (mana >= max * 0.25f)
+        //        manaFullness = HungerLevelNames[2];
+        //    else if (mana > 0)
+        //        manaFullness = HungerLevelNames[1];
+        //    else
+        //        manaFullness = HungerLevelNames[0];
+
+        //    session.Player.SendMessage($"Health Saturation : {healthFullness} ({health}/{max})");
+        //    session.Player.SendMessage($"Stamina Saturation : {staminaFullness} ({stamina}/{max})");
+        //    session.Player.SendMessage($"Mana Saturation : {manaFullness} ({mana}/{max})");
+        //}
+
+        ////[CommandHandler("unbuff", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld)]
+        ////[System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
+        ////public static void Unbuff(Session session, params string[] parameters)
+        ////=> session.Player.EnchantmentManager.DispelAllEnchantments();
+
+        //#endregion
 
 
     }

@@ -12,12 +12,11 @@ namespace phACE.phood
     public class Settings
     {
         #region Content Control
-        public bool ImportContentOnStart { get; set; } = true;
-        public bool RevertContentOnStop { get; set; } = true;
+        public static bool AutomaticContent { get; set; } = false;
         #endregion
 
-        #region Patch_VitalSaturation
-        public bool EnableVitalSaturation { get; set; } = true;
+        #region SaturatedVitals
+        public static bool SaturatedVitals { get; set; } = true;
         public static double BonusRegenHealth { get; set; } = 0.3d;
         public static double BonusRegenStamina { get; set; } = 3.0d;
         public static double BonusRegenMana { get; set; } = 1.0d;
@@ -26,8 +25,8 @@ namespace phACE.phood
         public static double SpiceOfLife { get; set; } = 10.0d;
         #endregion
 
-        #region Patch_ScalingAttributeBeers
-        public bool EnableScalingAttributeBeers { get; set; } = true;
+        #region BetterBeers
+        public static bool BetterBeers { get; set; } = true;
         #endregion
     }
     public class Mod : IHarmonyMod
@@ -47,9 +46,9 @@ namespace phACE.phood
         private DateTime _lastChange = DateTime.Now;
         private readonly TimeSpan _reloadInterval = TimeSpan.FromSeconds(3);
         private static ModState state = ModState.None;
-        private static Settings? settings = new();
+        private static Settings settings = new();
         static string SettingsPath => Path.Combine(Mod.ModPath, "Settings.json");
-        public static Settings? Settings { get => settings; set => settings = value; }
+        public static Settings Settings { get => settings; set => settings = value; }
         private readonly FileInfo settingsInfo = new(SettingsPath);
         private readonly JsonSerializerOptions _serializeOptions = new()
         {
@@ -58,6 +57,9 @@ namespace phACE.phood
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         };
+
+        private readonly SaturatedVitals _saturatedVitals = new();
+        private readonly BetterBeers _betterBeers = new();
         #endregion
 
         #region Initialize / Dispose (called by ACE)
@@ -112,23 +114,9 @@ namespace phACE.phood
                 Mod.State = ModState.Loading;
                 LoadSettings();
 
-                if (Settings != null && Settings.ImportContentOnStart)
-                {
-                    ContentManager.RevertContent(modPath);
-                    ContentManager.ImportContent(modPath);
-                }
-
-                if (Settings != null && Settings.EnableVitalSaturation)
-                {
-                    Patch_VitalSaturation.Init();
-                    Harmony.PatchCategory("VitalSaturation");
-                }
-
-                if (Settings != null && Settings.EnableVitalSaturation)
-                {
-                    Patch_ScalingAttributeBeers.Init();
-                    Harmony.PatchCategory("ScalingAttributeBeers");
-                }
+                //features
+                if (Settings.SaturatedVitals) _saturatedVitals.Init();
+                if (Settings.BetterBeers) _betterBeers.Init();
 
                 if (Mod.State == ModState.Error)
                 {
@@ -146,26 +134,17 @@ namespace phACE.phood
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
+        //[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
         private void Stop()
         {
-            if (Settings != null && Settings.RevertContentOnStop)
-            {
-                ContentManager.RevertContent(modPath);
-            }
-
             if (Mod.State == ModState.Error)
                 ModManager.Log($"Improper shutdown: {Mod.ModPath}", ModManager.LogLevel.Error);
             //CustomCommands.Unregister();
 
-            if (Settings != null && Settings.EnableScalingAttributeBeers)
-            {
-                Patch_ScalingAttributeBeers.Fini();
-            }
-            if (Settings != null && Settings.EnableVitalSaturation)
-            {
-                Patch_VitalSaturation.Fini();
-            }
+            //features
+            if (Settings.BetterBeers) _betterBeers.Fini();
+            if (Settings.SaturatedVitals) _saturatedVitals.Fini();
+
             Harmony.UnpatchAll(ID);
         }
         #endregion
@@ -200,7 +179,9 @@ namespace phACE.phood
 
             try
             {
+                #pragma warning disable CS8601 // Possible null reference assignment.
                 Settings = JsonSerializer.Deserialize<Settings>(jsonString, _serializeOptions);
+                #pragma warning restore CS8601 // Possible null reference assignment.
             }
             catch (Exception)
             {
@@ -229,11 +210,12 @@ namespace phACE.phood
         #endregion
 
         #region Commands
-        [CommandHandler($"{shortName}", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 2,
+        [CommandHandler($"{shortName}", AccessLevel.Developer, CommandHandlerFlag.RequiresWorld, 3,
             $"configure parts of the {shortName} mod",
-            "<system> <function>\n" +
-            $"@{shortName} content <import/revert> -- affects *all* content included in mod\n" +
-            $"can target specific content type by using <weenies/landblocks/spells/recipes/quests>")]
+            "<patch> <contentType> <import/revert>\n" +
+            //$"@{shortName} all content <import/revert> -- affects *all* content included in mod\n" +
+            $"<patch> : SaturatedVitals, BetterBeers\n" +
+            $"<contentType> : weenies, landblocks, spells, recipes, quests\n")]
         public static void ContentCommands(Session session, params string[] parameters)
             => ContentManager.ContentCommands(session, modPath, parameters);
         #endregion

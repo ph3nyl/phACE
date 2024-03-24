@@ -9,19 +9,28 @@ using HarmonyLib;
 
 namespace phACE.phood
 {
-    [HarmonyPatchCategory("ScalingAttributeBeers")]
-    public class Patch_ScalingAttributeBeers
+    [HarmonyPatchCategory(featureName)]
+    public class BetterBeers
     { 
         #region Init/Fini
         private const bool DEBUG_PRINT = false;
+        public const string featureName = "BetterBeers";
 
-        public static void Init()
+        public void Init()
         {
-            //
+            Mod.Harmony.PatchCategory(featureName);
+            if (Settings.AutomaticContent)
+            {
+                ContentManager.RevertContent(Path.Combine(Mod.ModPath, featureName));
+                ContentManager.ImportContent(Path.Combine(Mod.ModPath, featureName));
+            }
         }
-        public static void Fini()
+        public void Fini()
         {
-            //
+            if (Settings.AutomaticContent)
+            {
+                ContentManager.RevertContent(Path.Combine(Mod.ModPath, featureName));
+            }
         }
         #endregion
 

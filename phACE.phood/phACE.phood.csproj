@@ -19,7 +19,8 @@
 	</ItemGroup>
 		
   <ItemGroup>
-    <Content Include="content\*\*.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="BetterBeers\*\*.sql" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="SaturatedVitals\*\*.sql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
@@ -89,14 +90,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="content\landblocks\" />
-	  <Folder Include="content\spells\" />
-	  <Folder Include="content\quests\" />
-	  <Folder Include="content\recipes\" />
-	  <Folder Include="content\weenies\" />
-	</ItemGroup>
 	
 	<!--Get rid of assemblies that should be present in ACE-->
 	<Target Name="CleanupFiles" AfterTargets="PostBuildEvent">
